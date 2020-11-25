@@ -1,0 +1,173 @@
+:root {
+    --colorBlue: #04A6FB;
+    --colorGreen: #00B533;
+    --colorDark: #313E47;
+    --colorDarkMuted: #838B91;
+    --colorBg: #f9fafb;
+    --colorRed: #E02020;
+    --colorOrange: #FFC30B;
+    --colorLight: #f3f4f5;
+    --colorSilverLight: #F8F8F8;
+    --colorSilverMedium: #898989;
+    --colorSilverDark: #262626;
+
+    --font-heavy: SFProDisplay-Heavy, sans-serif;
+    --font-bold: SFProDisplay-Bold, SFProDisplay-Regular, sans-serif;
+    --font-regular: SFProDisplay-Regular, sans-serif;
+    --font-medium: SFProDisplay-Medium, SFProDisplay-Regular, sans-serif;
+    --font-light: SFProDisplay-Light, SFProDisplay-Medium, sans-serif;
+    --font-semibold: SFProDisplay-Semibold, SFProDisplay-Regular, sans-serif;
+}
+
+body {
+    background-color: var(--colorBg)!important;
+    margin: 0;
+    font-family: var(--font-regular);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+label {
+    user-select: none;
+}
+h1, h2, h3, h4, h5, h6, p, span {
+    color: var(--colorSilverDark);
+}
+
+/*MODAL CUSTOM STYLE BEGIN*/
+.modal-backdrop.show {
+    background-color: #f9fafb;
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+}
+
+.modal.fade:not(.show).right .modal-dialog {
+    -webkit-transform: translate3d(125%, 0, 0);
+    transform: translate3d(125%, 0, 0);
+}
+
+.modal.right {
+    cursor: url("../assets/close.svg"), auto;
+}
+
+.modal-dialog.my-modal {
+    cursor: auto;
+    margin: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 560px;
+    max-width: 90%;
+    height: 100vh;
+}
+
+@media (min-width: 1600px) {
+    .modal-dialog.my-modal {
+        width: 609px;
+    }
+}
+
+.my-modal .modal-content {
+    overflow: auto;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    box-shadow: 9px 0 50px rgba(208, 208, 208, 0.43);
+}
+/*===CONFIRM MODAL STYLE===*/
+.confirm-modal .confirm-modal-content .modal-content {
+    border: none;
+    user-select: none;
+    border-radius: 6px;
+    box-shadow: 9px 0 50px rgba(208, 208, 208, 0.43);
+}
+
+/*CUSTOM TAB PANE STYLE*/
+.custom-tab-pane {
+    background: var(--colorLight);
+    border-radius: 100px;
+    height: 50px;
+    width: auto;
+    max-width: 100%;
+    display: flex;
+}
+
+.custom-tab-pane .pane-item {
+    transition: all .15s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    height: 40px;
+    width: 140px;
+    border-radius: 100px;
+    color: var(--colorDarkMuted);
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+}
+
+.custom-tab-pane .pane-item.active, .custom-tab-pane .pane-item:hover {
+    box-shadow: 0 2px 2px rgba(187, 187, 187, 0.32);
+    background-color: white;
+    color: var(--colorDark);
+}
+
+
+/*REACTSTRAP PAGINATION CUSTOM STYLE begin*/
+.page-item .page-link {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    display: block;
+    padding: .4rem .75rem;
+    margin: 2px;
+    border-radius: 1rem;
+    line-height: 1.25;
+    color: var(--colorBlue);
+    background-color: #fff;
+    border: none;
+    box-shadow: 0 2px 2px rgba(216, 216, 216, 0.33);
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: var(--colorBlue);
+    border-color: #007bff;
+}
+
+.page-link:hover {
+    z-index: 2;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.page-item:first-child .page-link {
+    border-radius: 1rem!important;
+    /*border-bottom-left-radius: 1rem;*/
+}
+
+.page-item:last-child .page-link {
+    border-radius: 1rem!important;
+    /*border-bottom-right-radius: 1rem;*/
+}
+/*REACTSTRAP PAGINATION CUSTOM STYLE end/*/
+
+@media print {
+    header,
+    footer,
+    button,
+    .no-print,
+    .custom-tab-pane,
+    .table-responsive
+    {
+        display: none!important;
+    }
+    #docPrint {
+        display: block!important;
+    }
+}

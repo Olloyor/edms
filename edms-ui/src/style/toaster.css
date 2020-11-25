@@ -1,0 +1,65 @@
+/*REACT-TOASTIFY STYLE*/
+.Toastify__toast {
+    margin: 2px 3px;
+    min-height: 60px;
+    background-color: #fff !important;
+    box-shadow: 0 15px 60px rgba(21, 88, 6, 0.21);
+    font-size: 1rem;
+    line-height: 1.2rem;
+    color: #000;
+    font-family: var(--font-medium);
+}
+
+@media print {
+    .Toastify__toast {
+        display: none!important;
+    }
+}
+
+.Toastify__toast .Toastify__toast-body {
+    padding: 10px 10px 10px 50px
+}
+
+.Toastify__toast .Toastify__toast-body:before {
+    position: absolute;
+    top: 10px;
+    left: 10px
+}
+
+.Toastify__toast .Toastify__close-button {
+    color: #000;
+    margin: auto 10px;
+    align-items: center;
+}
+
+
+.Toastify__toast.Toastify__toast--error .Toastify__toast-body:before,
+.Toastify__toast.Toastify__toast--success .Toastify__toast-body:before,
+.Toastify__toast.Toastify__toast--info .Toastify__toast-body:before,
+.Toastify__toast.Toastify__toast--warning .Toastify__toast-body:before {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding-top: 5px;
+}
+
+.Toastify__toast.Toastify__toast--error .Toastify__toast-body:before{
+    background-color: rgba(222, 30, 58, .15);
+    content: url("../assets/notification/cancel.svg")
+}
+.Toastify__toast.Toastify__toast--success .Toastify__toast-body:before {
+    background-color: rgba(13,212,23,.22);
+    content: url("../assets/notification/success.svg")
+}
+.Toastify__toast.Toastify__toast--info .Toastify__toast-body:before {
+    background-color: rgba(33, 166, 244, .15);
+    content: url("../assets/notification/info.svg")
+}
+.Toastify__toast.Toastify__toast--warning .Toastify__toast-body:before {
+    background-color: rgba(255, 180, 54, .15);
+    content: url("../assets/notification/warning.svg")
+}
+

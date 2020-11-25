@@ -1,0 +1,15 @@
+${AnsiBackground.BRIGHT_GREEN}
+${AnsiBackground.DEFAULT} ${AnsiColor.GREEN}
+  __  __               ____    _   _
+ |  \/  |             / __ \  | | | |
+ | \  / |  _ __      | |  | | | | | |   ___    _   _    ___    _ __
+ | |\/| | | '__|     | |  | | | | | |  / _ \  | | | |  / _ \  | '__|
+ | |  | | | |     _  | |__| | | | | | | (_) | | |_| | | (_) | | |
+ |_|  |_| |_|    (_)  \____/  |_| |_|  \___/   \__, |  \___/  |_|
+                                                __/ |
+                                               |___/
+:: Spring Boot ::        ${spring-boot.version}
+:: Developer   ::        Mr.Olloyor
+${AnsiColor.DEFAULT}
+${AnsiBackground.BRIGHT_GREEN}
+${AnsiBackground.DEFAULT}
