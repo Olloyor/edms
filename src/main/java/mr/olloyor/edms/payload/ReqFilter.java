@@ -9,11 +9,11 @@ import javax.validation.constraints.*;
 @Data
 public class ReqFilter {
 
-//    @NotBlank(message = "Choose OrderType")
+    @NotBlank(message = "Choose OrderType")
 //    @Enumerated(value = EnumType.STRING)
     private String orderType;
 
-//    @NotBlank(message = "Choose Correspondent")
+    @NotBlank(message = "Choose Correspondent")
 //    @Enumerated
     private String correspondent;
 

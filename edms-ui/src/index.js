@@ -9,6 +9,12 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {ToastContainer} from "react-toastify";
 
+if (process.env.NODE_ENV === "production" && typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object") {
+    for (let [key, value] of Object.entries(window.__REACT_DEVTOOLS_GLOBAL_HOOK__)) {
+        window.__REACT_DEVTOOLS_GLOBAL_HOOK__[key] = typeof value == "function" ? ()=>{} : null;
+    }
+}
+
 ReactDOM.render(
     <React.StrictMode>
         <Router>

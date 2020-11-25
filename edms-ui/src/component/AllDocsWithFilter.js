@@ -19,10 +19,10 @@ class AllDocsWithFilter extends Component {
             editDoc: null,
             deleteDoc: null,
             allDocs: [],
-            orderType: "COURIER",
-            correspondent: "CB",
+            orderType: "ALL",
+            correspondent: "ALL",
             start: 1,
-            end: 2,
+            end: 12,
             word: "",
             page: 0,
             size: 5,
@@ -44,7 +44,7 @@ class AllDocsWithFilter extends Component {
                     numberOfElements: res.data.numberOfElements, offset: res.data.pageable.offset,
                     isFirst: res.data.first, isLast: res.data.last
                 })
-                // res.data.content.length === 0 && toast.info("NO DOCUMENTS WITH THIS FILTER")
+                res.data.content.length === 0 && toast.info("NO DOCUMENTS WITH THIS FILTER")
             }
             // console.log(res);
         }).catch(err => {

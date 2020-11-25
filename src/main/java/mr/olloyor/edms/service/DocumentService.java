@@ -56,7 +56,7 @@ public class DocumentService {
             if (doc.isPresent()) {
                 return ResponseEntity.status(200).body(doc);
             }
-            return ResponseEntity.status(404).body(new ApiResponse("Doc Not Found",false));
+            return ResponseEntity.status(404).body(new ApiResponse("Doc Not Found", false));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse("Something Went Wrong!", false));
         }
@@ -224,9 +224,21 @@ public class DocumentService {
             Date startDate = convertToDateViaInstant(sDate);
             Date endDate = convertToDateViaInstant(eDate);
 
+            if (filter.getCorrespondent().equals("ALL") && filter.getOrderType().equals("ALL")) {
+                Page<Document> filteredDocsOrder = documentRepository.findAllByFilter(startDate, endDate, filter.getWord(), pageable);
+                return ResponseEntity.status(200).body(filteredDocsOrder);
+            } else if (filter.getCorrespondent().equals("ALL")) {
+                OrderType orderType = OrderType.valueOf(filter.getOrderType());
+                Page<Document> filteredDocsOrder = documentRepository.findAllByFilter(orderType, startDate, endDate, filter.getWord(), pageable);
+                return ResponseEntity.status(200).body(filteredDocsOrder);
+            } else if (filter.getOrderType().equals("ALL")) {
+                CorrType corrType = CorrType.valueOf(filter.getCorrespondent());
+                Page<Document> filteredDocs = documentRepository.findAllByFilter(corrType, startDate, endDate, filter.getWord(), pageable);
+                return ResponseEntity.status(200).body(filteredDocs);
+            }
             CorrType corrType = CorrType.valueOf(filter.getCorrespondent());
             OrderType orderType = OrderType.valueOf(filter.getOrderType());
-            Page<Document> filteredDocs = documentRepository.findAllByFilter(corrType, orderType, startDate, endDate, filter.getWord(),pageable);
+            Page<Document> filteredDocs = documentRepository.findAllByFilter(corrType, orderType, startDate, endDate, filter.getWord(), pageable);
             return ResponseEntity.status(HttpStatus.OK).body(filteredDocs);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(e);

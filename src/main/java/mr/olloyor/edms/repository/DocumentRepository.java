@@ -21,4 +21,13 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     @Query("select d from document d where d.correspondent = :corr and d.orderType = :orderType and d.createdAt between :startDate and :endDate and (LOWER(d.theme) LIKE %:w% or LOWER(d.description) LIKE %:w%)")
     Page<Document> findAllByFilter(CorrType corr, OrderType orderType, Date startDate, Date endDate, String w, Pageable p);
 
+    @Query("select d from document d where d.orderType = :orderType and d.createdAt between :startDate and :endDate and (LOWER(d.theme) LIKE %:w% or LOWER(d.description) LIKE %:w%)")
+    Page<Document> findAllByFilter(OrderType orderType, Date startDate, Date endDate, String w, Pageable p);
+
+    @Query("select d from document d where d.correspondent = :corr and d.createdAt between :startDate and :endDate and (LOWER(d.theme) LIKE %:w% or LOWER(d.description) LIKE %:w%)")
+    Page<Document> findAllByFilter(CorrType corr, Date startDate, Date endDate, String w, Pageable p);
+
+    @Query("select d from document d where d.createdAt between :startDate and :endDate and (LOWER(d.theme) LIKE %:w% or LOWER(d.description) LIKE %:w%)")
+    Page<Document> findAllByFilter(Date startDate, Date endDate, String w, Pageable p);
+
 }

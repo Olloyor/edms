@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {config} from "../utils/config";
-import {Badge, Button, Col, Modal, Row, Spinner, Table, Tooltip} from "reactstrap/es";
+import {Button, Col, Modal, Row, Spinner, Table} from "reactstrap/es";
 import DocView from "./DocView.jsx";
 import IconPrint from "./icon/IconPrint";
 import IconDelete from "./icon/IconDelete";
 import IconEdit from "./icon/IconEdit";
-import PdfViewer from "./PdfViewer";
+
 import IconDownload from "./icon/IconDownload";
 import IconView from "./icon/IconView";
 import IconBack from "./icon/IconBack";
