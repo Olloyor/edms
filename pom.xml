@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>mr.olloyor</groupId>
-    <artifactId>edms-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>edms</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
     <name>edms</name>
     <description>EDMS project for Spring Boot</description>
 
