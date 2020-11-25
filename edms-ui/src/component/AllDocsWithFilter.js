@@ -6,8 +6,8 @@ import TableViewDocs from "./TableViewDocs";
 import {deleteDoc, editDoc, getByFilter} from "../api";
 import {date, corr} from "../utils/common"
 import {toast} from "react-toastify";
-import ModalAddEditDoc from "./ModalAddEditDoc";
-import ModalConfirm from "./ModalConfirm";
+import ModalAddEditDoc from "./modal/ModalAddEditDoc";
+import ModalConfirm from "./modal/ModalConfirm";
 
 class AllDocsWithFilter extends Component {
     constructor(props) {
@@ -44,7 +44,7 @@ class AllDocsWithFilter extends Component {
                     numberOfElements: res.data.numberOfElements, offset: res.data.pageable.offset,
                     isFirst: res.data.first, isLast: res.data.last
                 })
-                res.data.content.length === 0 && toast.info("NO DOCUMENTS WITH THIS FILTER")
+                // res.data.content.length === 0 && toast.info("NO DOCUMENTS WITH THIS FILTER")
             }
             // console.log(res);
         }).catch(err => {
@@ -56,7 +56,7 @@ class AllDocsWithFilter extends Component {
             }
         })
     }
-    filterDate=(state)=>{
+    filterDate = (state) => {
         return {
             orderType: state.orderType,
             correspondent: state.correspondent,
@@ -82,15 +82,17 @@ class AllDocsWithFilter extends Component {
         this.getAllDocsFilter(0, e.target.value, this.filterDate(this.state));
     }
 
-    makeFilter = ()=>{
+    makeFilter = () => {
         this.getAllDocsFilter(this.state.page, this.state.size, this.filterDate(this.state));
         // this.setState({word:""})
     }
 
     handleChange = (event) => {
         const {name, value, type, checked} = event.target;
-        if (name === "start" || name === "end"){
-            if(name==="start"&& value < 12 && value > this.state.end ){ this.setState({end: parseInt(value)+1})}
+        if (name === "start" || name === "end") {
+            if (name === "start" && value < 12 && value > this.state.end) {
+                this.setState({end: parseInt(value) + 1})
+            }
             this.setState({[name]: parseInt(value)});
             return;
         }
@@ -119,7 +121,7 @@ class AllDocsWithFilter extends Component {
             // console.log(res);
             if (res.status === 200) {
                 toast.success("Document Edited")
-                this.getAllDocsFilter(this.state.page, this.state.size,this.filterDate(this.state));
+                this.getAllDocsFilter(this.state.page, this.state.size, this.filterDate(this.state));
                 this.setState({editDoc: null, isOpenEditM: false})
             }
         }).catch(err => {
@@ -132,7 +134,7 @@ class AllDocsWithFilter extends Component {
         deleteDoc(this.state.deleteDoc).then(res => {
             if (res.status === 200) {
                 toast.success("Document Deleted");
-                this.getAllDocsFilter(this.state.page, this.state.size,this.filterDate(this.state));
+                this.getAllDocsFilter(this.state.page, this.state.size, this.filterDate(this.state));
             }
         }).catch(err => {
             // console.log(err);
@@ -157,6 +159,7 @@ class AllDocsWithFilter extends Component {
                         <Label for="theme">Order Type</Label>
                         <Input type="select" name="orderType" id="orderType"
                                value={this.state.orderType} onChange={this.handleChange}>
+                            <option value="ALL">All</option>
                             {orderType.map((item, i) => {
                                 return (
                                     <option key={i} value={item.key}>{item.value}</option>
@@ -168,6 +171,7 @@ class AllDocsWithFilter extends Component {
                         <Label for="theme">Correspondent Type</Label>
                         <Input type="select" name="correspondent" id="correspondent"
                                value={this.state.correspondent} onChange={this.handleChange}>
+                            <option value="ALL">All</option>
                             {corr.map((item, i) => {
                                 return (
                                     <option key={i} value={item.key}>{item.value}</option>
@@ -177,28 +181,29 @@ class AllDocsWithFilter extends Component {
                     </Col>
                     <Col md={3}>
                         <Row>
-                        <Col md={6}>
-                            <Label for="theme">Start date</Label>
-                            <Input type="select" name="start" id="start"
-                                   value={this.state.start} onChange={this.handleChange}>
-                                {date.map((item, i) => {
-                                    return (
-                                        <option key={i} value={item.key}>{item.value}</option>
-                                    )
-                                })}
-                            </Input>
-                        </Col>
-                        <Col md={6}>
-                            <Label for="theme">End date</Label>
-                            <Input type="select" name="end" id="end"
-                                   value={this.state.end} onChange={this.handleChange}>
-                                {date.map((item, i) => {
-                                    return (
-                                        <option key={i} value={item.key} disabled={this.state.start >= item.key}>{item.value}</option>
-                                    )
-                                })}
-                            </Input>
-                        </Col></Row>
+                            <Col md={6}>
+                                <Label for="theme">Start date</Label>
+                                <Input type="select" name="start" id="start"
+                                       value={this.state.start} onChange={this.handleChange}>
+                                    {date.map((item, i) => {
+                                        return (
+                                            <option key={i} value={item.key}>{item.value}</option>
+                                        )
+                                    })}
+                                </Input>
+                            </Col>
+                            <Col md={6}>
+                                <Label for="theme">End date</Label>
+                                <Input type="select" name="end" id="end"
+                                       value={this.state.end} onChange={this.handleChange}>
+                                    {date.map((item, i) => {
+                                        return (
+                                            <option key={i} value={item.key}
+                                                    disabled={this.state.start >= item.key}>{item.value}</option>
+                                        )
+                                    })}
+                                </Input>
+                            </Col></Row>
                     </Col>
                     <Col md={3}>
                         <Label for="theme">Filter word</Label>
@@ -235,7 +240,8 @@ class AllDocsWithFilter extends Component {
 
                 <Row className="d-flex align-items-center my-3 no-print">
                     <Col md={6}>
-                        <span className="no-print">Showing {this.state.numberOfElements === 0 ? 0 : this.state.offset + 1} to {this.state.offset + this.state.numberOfElements} of {this.state.totalElements} documents</span>
+                        <span
+                            className="no-print">Showing {this.state.numberOfElements === 0 ? 0 : this.state.offset + 1} to {this.state.offset + this.state.numberOfElements} of {this.state.totalElements} documents</span>
                     </Col>
                     <Col md={6}>
                         <MyPagination isFirst={this.state.isFirst} isLast={this.state.isLast}

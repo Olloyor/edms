@@ -9,12 +9,12 @@ import javax.validation.constraints.*;
 @Data
 public class ReqFilter {
 
-    @NotBlank(message = "Choose OrderType")
-    @Enumerated(value = EnumType.STRING)
+//    @NotBlank(message = "Choose OrderType")
+//    @Enumerated(value = EnumType.STRING)
     private String orderType;
 
-    @NotBlank(message = "Choose Correspondent")
-    @Enumerated
+//    @NotBlank(message = "Choose Correspondent")
+//    @Enumerated
     private String correspondent;
 
     @Digits(message = "Enter start month num",fraction = 0, integer = 2)

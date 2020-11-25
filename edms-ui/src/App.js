@@ -1,13 +1,13 @@
 import React, {Component} from "react";
 import {Route, Switch, Link} from 'react-router-dom';
 import {Badge, Button, Col, Container, Input, Row, TabContent, TabPane} from "reactstrap/es";
-import ModalAddEditDoc from "./component/ModalAddEditDoc";
+import ModalAddEditDoc from "./component/modal/ModalAddEditDoc";
 import CustomTabPane from "./component/CustomTabPane";
 import TableViewDocs from "./component/TableViewDocs";
 import {getAllDocs, getDocsCount, addNewDoc, editDoc, deleteDoc,getOrderType,getCorrespondentType} from "./api";
 import {toast} from "react-toastify";
 import MyPagination from "./component/MyPagination";
-import ModalConfirm from "./component/ModalConfirm";
+import ModalConfirm from "./component/modal/ModalConfirm";
 import AllDocsWithFilter from "./component/AllDocsWithFilter";
 import {date, corr} from "./utils/common";
 
@@ -190,7 +190,7 @@ class App extends Component {
                     </Col>
                 </Row>
                 <Row className="my-3 no-print">
-                    <Col className="d-flex align-items-center flex-row">
+                    <Col className="d-flex align-items-center flex-column flex-sm-row">
                         <span className="mr-2">You have <Badge className="badge-info px-2 py-1">{this.state.docsCount}</Badge> documents in </span>
                         <Input type="select" name="currentMonth" id="currentMonth" style={{width:"250px"}}
                                value={this.state.currentMonth} onChange={this.filterChange}>

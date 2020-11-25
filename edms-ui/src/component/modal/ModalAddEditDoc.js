@@ -14,9 +14,9 @@ import {
     ModalBody,
     Row
 } from "reactstrap/es";
-import {uploadFile} from "../api";
-import {corr} from "../utils/common";
-import {config} from "../utils/config";
+import {uploadFile} from "../../api";
+import {corr} from "../../utils/common";
+import {config} from "../../utils/config";
 import {toast} from "react-toastify";
 
 

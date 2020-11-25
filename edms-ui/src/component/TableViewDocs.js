@@ -1,17 +1,23 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {config} from "../utils/config";
-import {Badge, Button, Col, Spinner, Table, Tooltip} from "reactstrap/es";
+import {Badge, Button, Col, Modal, Row, Spinner, Table, Tooltip} from "reactstrap/es";
 import DocView from "./DocView.jsx";
 import IconPrint from "./icon/IconPrint";
 import IconDelete from "./icon/IconDelete";
 import IconEdit from "./icon/IconEdit";
+import PdfViewer from "./PdfViewer";
+import IconDownload from "./icon/IconDownload";
+import IconView from "./icon/IconView";
+import IconBack from "./icon/IconBack";
 
 class TableViewDocs extends Component {
     constructor(props) {
         super(props);
         this.state = {
             printDoc: {},
+            isOpenPdfModal: false,
+            doc: null,
 
         }
     }
@@ -22,6 +28,13 @@ class TableViewDocs extends Component {
             window.print();
 
         }, 600);
+    }
+
+    openPdfModal = (docPdf) => {
+        this.setState({doc: docPdf, isOpenPdfModal: true})
+    }
+    togglePdfModal = () => {
+        this.setState({doc: null, isOpenPdfModal: !this.state.isOpenPdfModal})
     }
 
 
@@ -49,16 +62,19 @@ class TableViewDocs extends Component {
                                     <td>{doc.outgoingDate}</td>
                                     <td>{doc.deadline}</td>
                                     <td>
-                                        <Badge className="py-1 px-2"
-                                               color={doc.isAccess ? "success" : "danger"}>{doc.isAccess ? "YES" : "NO"}</Badge>
+                                        <span className="py-1 px-2">{doc.isAccess ? "YES" : "NO"}</span>
                                     </td>
                                     <td>
-                                        <Badge className="py-1 px-2"
-                                               color={doc.isControl ? "success" : "danger"}>{doc.isControl ? "YES" : "NO"}</Badge>
+                                        <span className="py-1 px-2">{doc.isControl ? "YES" : "NO"}</span>
                                     </td>
                                     <td>
-                                        <a rel="noreferrer" target="_blank"
-                                           href={config.FILE_URL + doc.file?.id}>{doc.file?.name}</a>
+                                        {/*{doc.file?.name}*/}
+                                        <div className="d-flex align-items-center">
+                                            <Button className="mx-2" role="href" size="sm"
+                                                    href={config.FILE_URL + doc.file?.id}><IconDownload/></Button>
+                                            <Button color="primary" size="sm"
+                                                    onClick={() => this.openPdfModal(doc.file)}><IconView/></Button>
+                                        </div>
                                     </td>
                                     <td>
                                         <div className="d-flex align-items-center">
@@ -79,6 +95,8 @@ class TableViewDocs extends Component {
                 {<DocView doc={this.state.printDoc}/>}
                 {(!this.props.docs || this.props.docs.length === 0) && !this.props.isLoading &&
                 <h2 className="text-center text-muted text-uppercase">No Documents</h2>}
+                {this.state.doc &&
+                <PdfModal isOpen={this.state.isOpenPdfModal} toggle={this.togglePdfModal} doc={this.state.doc}/>}
             </React.Fragment>
         );
     }
@@ -103,6 +121,25 @@ function header() {
             <th>Actions</th>
         </tr>
         </thead>
+    )
+}
+
+export function PdfModal(props) {
+    console.log(props)
+    return (
+        <Modal isOpen={props.isOpen} toggle={props.toggle} role="layout" className="pdf-modal">
+            <Row className="p-2">
+                <Col md={4}>
+                    <Button color="danger" onClick={props.toggle}><IconBack/> Back</Button>
+                    <Button className="mx-2" role="href" href={config.FILE_URL + props.doc.id}><IconDownload/></Button>
+                </Col>
+                <Col md={8}>
+                    <h4>{props.doc?.name}</h4>
+                </Col>
+            </Row>
+            <iframe className={props.doc?.contentType} width="100%" height="100%" frameBorder="0"
+                    src={`https://docs.google.com/gview?url=${config.FILE_URL + props.doc?.id}&embedded=true`}/>
+        </Modal>
     )
 }
 

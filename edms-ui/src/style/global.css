@@ -34,6 +34,12 @@ h1, h2, h3, h4, h5, h6, p, span {
     color: var(--colorSilverDark);
 }
 
+@media (min-width: 1600px){
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 1460px!important;
+    }
+}
+
 /*MODAL CUSTOM STYLE BEGIN*/
 .modal-backdrop.show {
     background-color: #f9fafb;
@@ -66,6 +72,9 @@ h1, h2, h3, h4, h5, h6, p, span {
     .modal-dialog.my-modal {
         width: 609px;
     }
+    .modal-dialog.pdf-modal {
+        width: 60%;
+    }
 }
 
 .my-modal .modal-content {
@@ -80,6 +89,26 @@ h1, h2, h3, h4, h5, h6, p, span {
     border: none;
     user-select: none;
     border-radius: 6px;
+    box-shadow: 9px 0 50px rgba(208, 208, 208, 0.43);
+}
+
+/*MODAL PDF VIEWER*/
+.modal-dialog.pdf-modal {
+    margin: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    cursor: auto;
+    width: 70%;
+    max-width: 90%;
+    height: 100vh;
+}
+.pdf-modal .modal-content {
+    overflow: auto;
+    height: 100%;
+    border: none;
+    border-radius: 0;
     box-shadow: 9px 0 50px rgba(208, 208, 208, 0.43);
 }
 

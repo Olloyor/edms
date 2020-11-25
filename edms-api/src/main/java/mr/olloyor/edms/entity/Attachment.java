@@ -17,13 +17,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @JsonIgnoreProperties(
-        value = {"content", "contentType", "hibernateLazyInitializer"},
+        value = {"content"},
         allowGetters = true,allowSetters = true)
 public class Attachment extends AbsEntity {
 
     private String name;
 
-    @JsonIgnore
     private String contentType;
 
     private long size;
