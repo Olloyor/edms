@@ -125,7 +125,6 @@ function header() {
 }
 
 export function PdfModal(props) {
-    console.log(props)
     return (
         <Modal isOpen={props.isOpen} toggle={props.toggle} role="layout" className="pdf-modal">
             <Row className="p-2">
@@ -138,7 +137,7 @@ export function PdfModal(props) {
                 </Col>
             </Row>
             <iframe className={props.doc?.contentType} width="100%" height="100%" frameBorder="0"
-                    src={`https://docs.google.com/gview?url=${config.FILE_URL + props.doc?.id}&embedded=true`}/>
+                    src={`https://docs.google.com/gview?url=${"https://olloyortest.herokuapp.com"+config.FILE_URL + props.doc?.id}&embedded=true`}/>
         </Modal>
     )
 }
