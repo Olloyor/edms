@@ -1,5 +1,6 @@
 package mr.olloyor.edms.repository;
 
+import mr.olloyor.edms.entity.Attachment;
 import mr.olloyor.edms.entity.Document;
 import mr.olloyor.edms.entity.enums.CorrType;
 import mr.olloyor.edms.entity.enums.OrderType;
@@ -12,6 +13,8 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface DocumentRepository extends JpaRepository<Document, UUID> {
+
+	Boolean existsByFile(Attachment file);
 
     @Query("select COUNT(d) from document d where d.correspondent = :corr and d.createdAt between :startDate and :endDate")
     Long findAllByCount(CorrType corr, Date startDate, Date endDate);

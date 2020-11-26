@@ -20,3 +20,9 @@ export const corr = [
     {"key": "GNI", "value": "GNI"},
     {"key": "TCJ", "value": "TCJ"}
 ]
+
+export const orderType = [
+    {"key": "EMAIL", "value": "Email"},
+    {"key": "TELEGRAMMA", "value": "Telegramma"},
+    {"key": "COURIER", "value": "Courier"}
+]

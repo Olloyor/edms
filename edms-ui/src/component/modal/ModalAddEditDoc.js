@@ -12,10 +12,10 @@ import {
     Label,
     Modal,
     ModalBody,
-    Row
+    Row, Spinner
 } from "reactstrap/es";
 import {uploadFile} from "../../api";
-import {corr} from "../../utils/common";
+import {corr, orderType} from "../../utils/common";
 import {config} from "../../utils/config";
 import {toast} from "react-toastify";
 
@@ -55,7 +55,8 @@ class ModalAddEditDoc extends Component {
                     correspondent: "NO",
                 },
             docErrors: {},
-            isSubmitting: false,
+            isUploadingFile: false,
+            isSubmitting: this.props.isSubmitting,
         }
     }
 
@@ -79,7 +80,7 @@ class ModalAddEditDoc extends Component {
             })
             // toast.warn("File size must be less than 1MB\nFile type must be *.pdf , *.doc, *.docx")
             return;
-        } else if (newFile.size > config.MAX_FILE_SIZE) {
+        } else if (newFile.size && newFile.size > config.MAX_FILE_SIZE) {
             this.setState({docErrors: {...this.state.docErrors, fileId: "File size must be less than 1MB"}})
             // toast.warn("File size must be less than 1MB")
             return;
@@ -98,13 +99,14 @@ class ModalAddEditDoc extends Component {
             newFile,
             newFile.name
         );
-
+        this.setState({isUploadingFile:true});
         uploadFile(formData).then(res => {
             // console.log(res);
             if (res.status === 200) {
                 this.setState({
-                    docForm:{...this.state.docForm, fileId: res.data.result[0]},
-                    docErrors: {...this.state.docErrors, fileId: ""}});
+                    docForm: {...this.state.docForm, fileId: res.data.result[0]},
+                    docErrors: {...this.state.docErrors, fileId: ""}, isUploadingFile:false
+                });
             }
         }).catch(err => {
             // console.log(err);
@@ -113,6 +115,7 @@ class ModalAddEditDoc extends Component {
             } else {
                 toast.error("Something went wrong")
             }
+            this.setState({isUploadingFile:false});
         })
         // handleFile(newFile ? newFile : this.state.file)
     };
@@ -139,13 +142,15 @@ class ModalAddEditDoc extends Component {
                 correspondent: "NO",
             },
             docErrors: {},
+            isUploadingFile: false,
+            isSubmitting: false,
         })
     }
-    clearErrors=()=>{
-        this.setState({docErrors:{}})
+    clearErrors = () => {
+        this.setState({docErrors: {}})
     }
 
-    isValid=(value)=>{
+    isValid = (value) => {
         const reg = /^(([0-9]{3}[a-zA-Z0-9\s]{0,}))$/;
         return reg.test(value);
     }
@@ -153,9 +158,9 @@ class ModalAddEditDoc extends Component {
     validateForm = (doc) => {
         let errors = this.state.docErrors;
 
-        if (doc.fileId === null || doc.fileId.trim() === ''){
+        if (doc.fileId === null || doc.fileId.trim() === '') {
             errors.fileId = "Document is Required";
-        }else {
+        } else {
             errors.fileId = "";
         }
 
@@ -163,7 +168,7 @@ class ModalAddEditDoc extends Component {
             errors.regId = "Register ID is required";
         } else if (!this.isValid(doc.regId)) {
             errors.regId = "Register ID is invalid";
-        }else {
+        } else {
             errors.regId = ""
         }
 
@@ -171,7 +176,7 @@ class ModalAddEditDoc extends Component {
             errors.outgoingDoc = "Outgoing Doc is required";
         } else if (!this.isValid(doc.outgoingDoc)) {
             errors.outgoingDoc = "Outgoing should start with min 3 number";
-        }else {
+        } else {
             errors.outgoingDoc = "";
         }
 
@@ -179,7 +184,7 @@ class ModalAddEditDoc extends Component {
             errors.outgoingDate = "Outgoing Date is required";
         } else if (!new Date(doc.outgoingDate).getTime()) {
             errors.outgoingDate = "Date is invalid";
-        }else {
+        } else {
             errors.outgoingDate = "";
         }
 
@@ -187,7 +192,7 @@ class ModalAddEditDoc extends Component {
             errors.deadline = "Deadline is required";
         } else if ((new Date(doc.createdAt).getTime() > new Date(doc.deadline).getTime())) {
             errors.deadline = "Deadline must be bigger";
-        }else {
+        } else {
             errors.deadline = "";
         }
 
@@ -197,8 +202,8 @@ class ModalAddEditDoc extends Component {
             errors.theme = "Minimum length is 2"
         } else if (doc.theme.length > 100) {
             errors.theme = "Maximum length is 100"
-        }else {
-            errors.theme ="";
+        } else {
+            errors.theme = "";
         }
 
         if (doc.description === '') {
@@ -207,19 +212,19 @@ class ModalAddEditDoc extends Component {
             errors.description = "Minimum length is 2"
         } else if (doc.description.length > 1000) {
             errors.description = "Maximum length is 1000"
-        }else {
+        } else {
             errors.description = "";
         }
 
         if (doc.orderType === "NO" || doc.orderType === "") {
             errors.orderType = "Please select order type!";
-        }else {
-            errors.orderType ="";
+        } else {
+            errors.orderType = "";
         }
 
         if (doc.correspondent === "NO" || doc.correspondent === "") {
             errors.correspondent = "Please select correspondent!";
-        }else {
+        } else {
             errors.correspondent = "";
         }
         this.setState({docErrors: errors})
@@ -253,7 +258,7 @@ class ModalAddEditDoc extends Component {
 
             this.props.onSubmit(this.state.docForm)
             this.clearErrors()
-        }else {
+        } else {
             toast.info("Fill Required fields correctly!")
         }
     }
@@ -262,14 +267,12 @@ class ModalAddEditDoc extends Component {
         const docForm = this.state.docForm
         const docErrors = this.state.docErrors
 
-        const orderType = [
-            {"key": "EMAIL", "value": "Email"},
-            {"key": "TELEGRAMMA", "value": "Telegramma"},
-            {"key": "COURIER", "value": "Courier"}
-        ]
 
         return (
-            <Modal isOpen={this.props.isOpen} backdrop={true} toggle={()=>{ this.props.toggle(); this.clearErrors()}} modalClassName="right"
+            <Modal isOpen={this.props.isOpen} backdrop={!this.props.isSubmitting} toggle={() => {
+                this.props.toggle();
+                this.clearErrors()
+            }} modalClassName="right"
                    className="my-modal"
                    role="layout">
                 <ModalBody className="p-2 px-5 p-md-3 mx-2">
@@ -282,16 +285,24 @@ class ModalAddEditDoc extends Component {
                         <Row className="my-2">
                             <Col className="my-1 col-12">
                                 <Label for="createdAt">Registration Date</Label>
-                                <Input type="text" name="createdAt" id="createdAt" placeholder={new Date().toLocaleString()}
+                                <Input type="text" name="createdAt" id="createdAt"
+                                       placeholder={new Date().toLocaleString()}
                                        value={docForm.createdAt} disabled/>
                             </Col>
                             <Col className="my-1 col-12">
                                 <Label for="file">Upload File <span className="text-danger">*</span></Label>
                                 <CustomInput type="file" id="file" name="file" label={this.props.editValues?.file.name}
-                                             valid={docForm.fileId !=="" && docForm.fileId !==null} invalid={docErrors.fileId} accept=".doc, .docx, .pdf" onChange={this.handleFileChange}/>
-                                <div className="invalid-feedback" style={{display: docErrors.fileId===""?"none":"block"}}>{docErrors.fileId}</div>
-                                <div className="valid-feedback" style={{display: docForm.fileId?"block":"none"}}>File Uploaded</div>
-                                <FormText className="text-muted">Required: .doc, .docx, .pdf and must be less than 1MB</FormText>
+                                             valid={docForm.fileId !== "" && docForm.fileId !== null}
+                                             invalid={docErrors.fileId} accept=".doc, .docx, .pdf"
+                                             onChange={this.handleFileChange}/>
+                                <div className="invalid-feedback"
+                                     style={{display: docErrors.fileId === "" ? "none" : "block"}}>{docErrors.fileId}</div>
+                                <div className="valid-feedback"
+                                     style={{display: docForm.fileId ? "block" : "none"}}>File Uploaded
+                                </div>
+                                {this.state.isUploadingFile ? <div className="valid-feedback">Uploading...</div>:''}
+                                <FormText className="text-muted">Required: .doc, .docx, .pdf and must be less than
+                                    1MB</FormText>
                             </Col>
                             <Col className="my-1 col-12">
                                 <Label for="regId">№ Register <span className="text-danger">*</span></Label>
@@ -317,7 +328,8 @@ class ModalAddEditDoc extends Component {
                                 <FormFeedback>{docErrors.description}</FormFeedback>
                             </Col>
                             <Col className="my-1 col-12">
-                                <Label for="outgoingDoc">№ Outgoing Document <span className="text-danger">*</span></Label>
+                                <Label for="outgoingDoc">№ Outgoing Document <span
+                                    className="text-danger">*</span></Label>
                                 <Input type="text" name="outgoingDoc" id="outgoingDoc"
                                        placeholder="№ Outgoing"
                                        value={docForm.outgoingDoc} onChange={this.handleChange}
@@ -387,10 +399,11 @@ class ModalAddEditDoc extends Component {
                         <Row className="my-2 mt-5">
                             <Col className="col-sm-6 my-1">
                                 <Button type="submit" className="float-right btn-block" color="primary"
-                                        onClick={this.submit}>Save</Button>
+                                        disabled={this.props.isSubmitting} onClick={this.submit}>{this.props.isSubmitting?<Spinner size="sm"/>:"Save"}</Button>
                             </Col>
                             <Col className="col-sm-6 my-1">
                                 <Button className="btn-block" color="secondary"
+                                        disabled={this.props.isSubmitting}
                                         onClick={() => {
                                             this.props.toggle()
                                             this.clearForm()
@@ -406,6 +419,7 @@ class ModalAddEditDoc extends Component {
 
 
 ModalAddEditDoc.propTypes = {
+    isSubmitting: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired,
     toggle: PropTypes.func.isRequired,

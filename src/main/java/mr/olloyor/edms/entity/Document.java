@@ -1,6 +1,7 @@
 package mr.olloyor.edms.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,6 +44,7 @@ public class Document extends AbsEntity {
 
     private Boolean isControl;
 
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, targetEntity = Attachment.class)
     private Attachment file;
 

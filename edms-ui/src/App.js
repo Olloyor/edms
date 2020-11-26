@@ -4,13 +4,12 @@ import {Badge, Button, Col, Container, Input, Row, TabContent, TabPane} from "re
 import ModalAddEditDoc from "./component/modal/ModalAddEditDoc";
 import CustomTabPane from "./component/CustomTabPane";
 import TableViewDocs from "./component/TableViewDocs";
-import {getAllDocs, getDocsCount, addNewDoc, editDoc, deleteDoc,getOrderType,getCorrespondentType} from "./api";
+import {getAllDocs, getDocsCount, addNewDoc, editDoc, deleteDoc, getOrderType, getCorrespondentType} from "./api";
 import {toast} from "react-toastify";
 import MyPagination from "./component/MyPagination";
 import ModalConfirm from "./component/modal/ModalConfirm";
 import AllDocsWithFilter from "./component/AllDocsWithFilter";
 import {date, corr} from "./utils/common";
-
 
 
 class App extends Component {
@@ -19,7 +18,9 @@ class App extends Component {
         this.tabPane = ["All", "Filter"]
         this.state = {
             activeTab: this.tabPane[0],
-            isLoading: false,
+            isAdding: false,
+            isEditing: false,
+            isLoading: true,
             isOpen: false,
             isOpenEditM: false,
             isOpenDelM: false,
@@ -36,7 +37,7 @@ class App extends Component {
             isLast: true,
             allByFilter: [],
             fileId: "",
-            docsCount:0,
+            docsCount: 0,
             correspondent: "CB",
             currentMonth: new Date().getMonth() + 1,
         }
@@ -55,7 +56,7 @@ class App extends Component {
                     allDocs: res.data.content, page: res.data.number, size: res.data.size,
                     totalPages: res.data.totalPages, totalElements: res.data.totalElements,
                     numberOfElements: res.data.numberOfElements, offset: res.data.pageable.offset,
-                    isFirst: res.data.first, isLast: res.data.last
+                    isFirst: res.data.first, isLast: res.data.last, isLoading: false
                 })
             }
             // console.log(res)
@@ -66,8 +67,8 @@ class App extends Component {
             } else {
                 toast.error("Something went wrong")
             }
+            this.setState({isLoading: false})
         })
-        this.setState({isLoading: false})
     }
     getDocsCountByCorr = (correspondent, month) => {
         getDocsCount(correspondent, month).then(res => {
@@ -76,8 +77,11 @@ class App extends Component {
                 this.setState({docsCount: res.data})
             }
         }).catch(err => {
-            // console.log(err);
-            toast.error("Something went wrong");
+            if (err.message === "Network Error") {
+                toast.warn("Check your network")
+            } else {
+                toast.error("Something went wrong")
+            }
         })
     }
     // getOrderTypeEnum=()=>{
@@ -97,12 +101,12 @@ class App extends Component {
         this.getAllDocsPageable(0, e.target.value);
     }
 
-    filterChange=(event)=>{
+    filterChange = (event) => {
         const {name, value, type, checked} = event.target;
-        if (name === "correspondent"){
+        if (name === "correspondent") {
             this.getDocsCountByCorr(value, this.state.currentMonth);
 
-        }else if(name === "currentMonth"){
+        } else if (name === "currentMonth") {
             this.getDocsCountByCorr(this.state.correspondent, value);
         }
         this.setState({[name]: value})
@@ -137,28 +141,35 @@ class App extends Component {
 
     // ADD DOC SUBMIT
     submitAdd = (data) => {
+        this.setState({isAdding: true});
         addNewDoc(data).then(res => {
             // console.log(res);
             toast.success("Successfully Added")
             const newAllDocs = [res.data, ...this.state.allDocs]
-            this.setState({allDocs: newAllDocs, isOpen: false})
+            this.setState({allDocs: newAllDocs, isOpen: false, isAdding: false})
         }).catch(err => {
-            // console.log(err)
-            toast.error("Something went wrong")
+            this.setState({isAdding: false});
+            if (err.message === "Network Error") {
+                toast.warn("Check your network")
+            } else {
+                toast.error("Something went wrong")
+            }
         })
     }
     // EDIT DOC SUBMIT
     submitEdit = (data) => {
+        this.setState({isEditing: true});
         editDoc(data).then(res => {
             // console.log(res);
             if (res.status === 200) {
                 toast.success("Document Edited")
                 this.getAllDocsPageable(this.state.page, this.state.size);
-                this.setState({editDoc: null, isOpenEditM: false})
+                this.setState({editDoc: null, isOpenEditM: false, isEditing: false})
             }
         }).catch(err => {
             // console.log(err);
             toast.error("Something went wrong");
+            this.setState({isEditing: true});
         })
     }
     // DELETE DOC SUBMIT
@@ -191,8 +202,9 @@ class App extends Component {
                 </Row>
                 <Row className="my-3 no-print">
                     <Col className="d-flex align-items-center flex-column flex-sm-row">
-                        <span className="mr-2">You have <Badge className="badge-info px-2 py-1">{this.state.docsCount}</Badge> documents in </span>
-                        <Input type="select" name="currentMonth" id="currentMonth" style={{width:"250px"}}
+                        <span className="mr-2">You have <Badge
+                            className="badge-info px-2 py-1">{this.state.docsCount}</Badge> documents in </span>
+                        <Input type="select" name="currentMonth" id="currentMonth" style={{width: "250px"}}
                                value={this.state.currentMonth} onChange={this.filterChange}>
                             {date.map((item, i) => {
                                 return (
@@ -201,7 +213,7 @@ class App extends Component {
                             })}
                         </Input>
                         <span className="mx-2">by</span>
-                        <Input type="select" name="correspondent" id="correspondent" style={{width:"250px"}}
+                        <Input type="select" name="correspondent" id="correspondent" style={{width: "250px"}}
                                value={this.state.correspondent} onChange={this.filterChange}>
                             {corr.map((item, i) => {
                                 return (
@@ -240,7 +252,8 @@ class App extends Component {
 
                         <Row className="d-flex align-items-center my-3 no-print">
                             <Col md={6}>
-                                <span className="no-print">Showing {this.state.numberOfElements === 0 ? 0 : this.state.offset + 1} to {this.state.offset + this.state.numberOfElements} of {this.state.totalElements} documents</span>
+                                <span
+                                    className="no-print">Showing {this.state.numberOfElements === 0 ? 0 : this.state.offset + 1} to {this.state.offset + this.state.numberOfElements} of {this.state.totalElements} documents</span>
                             </Col>
                             <Col md={6}>
                                 <MyPagination isFirst={this.state.isFirst} isLast={this.state.isLast}
@@ -253,10 +266,12 @@ class App extends Component {
                         <AllDocsWithFilter/>
                     </TabPane>
                 </TabContent>
-                <ModalAddEditDoc isOpen={this.state.isOpen} onSubmit={this.submitAdd} toggle={this.toggleAddDocModal}/>
+                <ModalAddEditDoc isSubmitting={this.state.isAdding} isOpen={this.state.isOpen} onSubmit={this.submitAdd}
+                                 toggle={this.toggleAddDocModal}/>
 
                 {this.state.editDoc &&
-                <ModalAddEditDoc isOpen={this.state.isOpenEditM} toggle={this.toggleEditDocModal}
+                <ModalAddEditDoc isSubmitting={this.state.isEditing} isOpen={this.state.isOpenEditM}
+                                 toggle={this.toggleEditDocModal}
                                  onSubmit={this.submitEdit} editValues={this.state.editDoc}/>}
                 <ModalConfirm confirm={this.submitDeleteDoc} isOpen={this.state.isOpenDelM}
                               toggle={this.toggleDelDocModal}/>

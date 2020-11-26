@@ -65,23 +65,27 @@ public class DocumentService {
     public HttpEntity<?> addDoc(ReqDoc doc) {
         try {
             Optional<Attachment> file = attachmentRepository.findById(doc.getFileId());
-
-            Document newDoc = new Document(
-                    doc.getRegId(),
-                    doc.getOutgoingDoc(),
-                    OrderType.valueOf(doc.getOrderType().toUpperCase()),
-                    CorrType.valueOf(doc.getCorrespondent().toUpperCase()),
-                    doc.getTheme(),
-                    doc.getDescription(),
-                    doc.getIsAccess(),
-                    doc.getIsControl(),
-                    file.get(),
-                    doc.getOutgoingDate(),
-                    doc.getDeadline()
-            );
-
-            newDoc = documentRepository.save(newDoc);
-            return ResponseEntity.status(200).body(newDoc);
+            if (file.isPresent()) {
+                if (documentRepository.existsByFile(file.get())) {
+                    return ResponseEntity.status(409).body(new ApiResponse("Please Upload new File", false));
+                }
+                Document newDoc = new Document(
+                        doc.getRegId(),
+                        doc.getOutgoingDoc(),
+                        OrderType.valueOf(doc.getOrderType().toUpperCase()),
+                        CorrType.valueOf(doc.getCorrespondent().toUpperCase()),
+                        doc.getTheme(),
+                        doc.getDescription(),
+                        doc.getIsAccess(),
+                        doc.getIsControl(),
+                        file.get(),
+                        doc.getOutgoingDate(),
+                        doc.getDeadline()
+                );
+                newDoc = documentRepository.save(newDoc);
+                return ResponseEntity.status(200).body(newDoc);
+            }
+            return ResponseEntity.status(400).body(new ApiResponse("File is wrong", false));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e);
         }
@@ -91,24 +95,31 @@ public class DocumentService {
         try {
             Optional<Document> editDoc = documentRepository.findById(docId);
             if (!editDoc.isPresent()) {
-                return ResponseEntity.status(404).body(new ApiResponse(docId + " Not Found", false));
+                return ResponseEntity.status(404).body(new ApiResponse("File Not Found", false));
             }
-            Document doc = editDoc.get();
+            Optional<Attachment> file = attachmentRepository.findById(reqDoc.getFileId());
+            if (file.isPresent()) {
+                if (!editDoc.get().getFile().getId().equals(file.get().getId()) && documentRepository.existsByFile(file.get())) {
+                    return ResponseEntity.status(400).body(new ApiResponse("Please Upload File", false));
+                }
+                Document doc = editDoc.get();
 
-            doc.setRegId(reqDoc.getRegId());
-            doc.setOutgoingDoc(reqDoc.getOutgoingDoc());
-            doc.setOrderType(OrderType.valueOf(reqDoc.getOrderType()));
-            doc.setCorrespondent(CorrType.valueOf(reqDoc.getCorrespondent()));
-            doc.setTheme(reqDoc.getTheme());
-            doc.setDescription(reqDoc.getDescription());
-            doc.setIsAccess(reqDoc.getIsAccess());
-            doc.setIsControl(reqDoc.getIsControl());
-            doc.setOutgoingDoc(reqDoc.getOutgoingDoc());
-            doc.setDeadline(reqDoc.getDeadline());
-            doc.setFile(attachmentRepository.findById(reqDoc.getFileId()).get());
-            doc = documentRepository.save(doc);
+                doc.setRegId(reqDoc.getRegId());
+                doc.setOutgoingDoc(reqDoc.getOutgoingDoc());
+                doc.setOrderType(OrderType.valueOf(reqDoc.getOrderType()));
+                doc.setCorrespondent(CorrType.valueOf(reqDoc.getCorrespondent()));
+                doc.setTheme(reqDoc.getTheme());
+                doc.setDescription(reqDoc.getDescription());
+                doc.setIsAccess(reqDoc.getIsAccess());
+                doc.setIsControl(reqDoc.getIsControl());
+                doc.setOutgoingDoc(reqDoc.getOutgoingDoc());
+                doc.setDeadline(reqDoc.getDeadline());
+                doc.setFile(file.get());
+                doc = documentRepository.save(doc);
 
-            return ResponseEntity.status(200).body(doc);
+                return ResponseEntity.status(200).body(doc);
+            }
+            return ResponseEntity.status(40).body(new ApiResponse("File Not Found", false));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e);
         }

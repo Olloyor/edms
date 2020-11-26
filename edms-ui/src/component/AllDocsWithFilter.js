@@ -13,7 +13,7 @@ class AllDocsWithFilter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: false,
+            isLoading: true,
             isOpenEditM: false,
             isOpenDelM: false,
             editDoc: null,
@@ -36,13 +36,14 @@ class AllDocsWithFilter extends Component {
     }
 
     getAllDocsFilter = (page, size, data) => {
+        this.setState({isLoading: true})
         getByFilter(page, size, data).then(res => {
             if (res.status === 200) {
                 this.setState({
                     allDocs: res.data.content, page: res.data.number, size: res.data.size,
                     totalPages: res.data.totalPages, totalElements: res.data.totalElements,
                     numberOfElements: res.data.numberOfElements, offset: res.data.pageable.offset,
-                    isFirst: res.data.first, isLast: res.data.last
+                    isFirst: res.data.first, isLast: res.data.last, isLoading: false
                 })
                 res.data.content.length === 0 && toast.info("NO DOCUMENTS WITH THIS FILTER")
             }
@@ -54,6 +55,7 @@ class AllDocsWithFilter extends Component {
             } else {
                 toast.error("Something went wrong")
             }
+            this.setState({isLoading: false})
         })
     }
     filterDate = (state) => {
